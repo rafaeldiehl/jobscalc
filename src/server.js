@@ -1,8 +1,11 @@
 const express = require("express");
-const server = express();
 const routes = require("./routes");
 
+const server = express();
+
 const port = 3000;
+
+server.set("view engine", "ejs");
 
 // Habilitar arquivos estáticos
 server.use(express.static("public"));
