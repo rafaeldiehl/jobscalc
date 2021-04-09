@@ -2,9 +2,11 @@ const express = require("express");
 const server = express();
 const port = 3000;
 
+// Habilitar arquivos estáticos
+server.use(express.static("public"));
+
 server.get('/', (req, res) => {
-  console.log('Alguém acessou a rota /');
-  return res.send('Hello World! 🚀');
+  return res.sendFile(__dirname + "/views/index.html");
 });
 
 server.listen(port, () => {
