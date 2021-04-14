@@ -12,10 +12,25 @@ const profile = {
   "vacation-per-year": 4
 }
 
-const jobs = new Array;
+const jobs = [
+  {
+    id: 1,
+    name: "Pizzaria Guloso",
+    "daily-hours": 2,
+    "total-hours": 60,
+    createAt: Date.now() 
+  },
+  {
+    id: 2,
+    name: "OneTwo Project",
+    "daily-hours": 3,
+    "total-hours": 47,
+    createAt: Date.now()
+  }
+];
 
 routes.get('/', (req, res) => {
-  return res.render(views + 'index', { profile });
+  return res.render(views + 'index', { profile, jobs });
 });
 
 routes.get('/job', (req, res) => {
@@ -23,7 +38,16 @@ routes.get('/job', (req, res) => {
 });
 
 routes.post('/job', (req, res) => {
-  jobs.push(req.body);
+  const lastId = jobs[jobs.length - 1]?.id || 1;
+
+  jobs.push({
+    id: lastId + 1,
+    name: req.body.name,
+    "daily-hours": req.body["daily-hours"],
+    "total-hours": req.body["total-hours"],
+    createAt: Date.now() // atribuindo data de hoje
+  });
+
   console.log(jobs);
   return res.redirect('/');
 });
