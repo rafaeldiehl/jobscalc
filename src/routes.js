@@ -3,14 +3,37 @@ const routes = express.Router();
 
 const views = __dirname + "/views/";
 
-const profile = {
-  name: "Rafael",
-  avatar: "https://github.com/rafaeldiehl.png",
-  "monthly-budget": 3000,
-  "days-per-week": 5,
-  "hours-per-day": 5,
-  "vacation-per-year": 4,
-  "value-hour": 75
+const Profile = {
+  data: {
+    name: "Rafael",
+    avatar: "https://github.com/rafaeldiehl.png",
+    "monthly-budget": 3000,
+    "days-per-week": 5,
+    "hours-per-day": 5,
+    "vacation-per-year": 4,
+    "value-hour": 75
+  },
+  controllers: {
+    index(req, res) {
+      return res.render(views + "profile", {profile: Profile.data })
+    },
+    update(req, res) {
+      const data = req.body;
+      const weeksPerYear = 52;
+      const weeksPerMonth = (weeksPerYear - data["vacation-per-year"]) / 12
+      const weekTotalHours = data["hours-per-day"] * data["days-per-week"]
+      const monthlyTotalHours = weekTotalHours * weeksPerMonth;
+      const valueHour = data["value-hour"] = data["monthly-budget"] / monthlyTotalHours;
+
+      Profile.data = {
+        ...Profile.data,
+        ...req.body,
+        "value-hour": valueHour
+      }
+
+      return res.redirect('/profile')
+    }
+  }
 }
 
 const Job = {
@@ -40,11 +63,11 @@ const Job = {
           ...job,
           remaining,
           status,
-          budget: profile["value-hour"] + Number(job["total-hours"])
+          budget: Profile.data["value-hour"] + Number(job["total-hours"])
         }
       });
     
-      return res.render(views + 'index', { profile, jobs: updatedJobs });
+      return res.render(views + 'index', { profile: Profile.data, jobs: updatedJobs });
     },
     create: (req, res) => {
       return res.render(views + 'job');
@@ -83,17 +106,10 @@ const Job = {
 
 
 routes.get('/', Job.controllers.index);
-
 routes.get('/job', Job.controllers.create);
-
 routes.post('/job', Job.controllers.save);
-
-routes.get('/job/edit', (req, res) => {
-  return res.render(views + 'job-edit');
-});
-
-routes.get('/profile', (req, res) => {
-  return res.render(views + 'profile', { profile });
-});
+routes.get('/job/edit', (req, res) => res.render(views + 'job-edit'));
+routes.get('/profile', Profile.controllers.index);
+routes.post('/profile', Profile.controllers.update)
 
 module.exports = routes;
