@@ -1,8 +1,6 @@
 const express = require('express');
 const routes = express.Router()
 
-const views = __dirname + "/views/"
-
 const Profile = {
   data: {
     name: "Rafael",
@@ -16,7 +14,7 @@ const Profile = {
 
   controllers: {
     index(req, res) {
-      return res.render(views + "profile", { profile: Profile.data })
+      return res.render("profile", { profile: Profile.data })
     },
 
     update(req, res) {
@@ -84,11 +82,11 @@ const Job = {
         }
       })
     
-      return res.render(views + "index", { jobs: updatedJobs, profile: Profile.data })
+      return res.render("index", { jobs: updatedJobs, profile: Profile.data })
     },
 
     create(req, res) {
-      return res.render(views + "job")
+      return res.render("job")
     },
 
     save(req, res) {
@@ -116,7 +114,7 @@ const Job = {
 
       job.budget = Job.services.calculateBudget(job, Profile.data["value-hour"])
 
-      return res.render(views + "job-edit", { job })
+      return res.render("job-edit", { job })
     },
 
     update(req, res) {
@@ -187,4 +185,4 @@ routes.get('/profile', Profile.controllers.index)
 routes.post('/profile', Profile.controllers.update)
 
  
-module.exports = routes;
+module.exports = routes
